@@ -1,7 +1,6 @@
 name: stepo
 description: A Flutter package for animated unit stepper with customisable animation durations, colors and sizes.
-version: 1.0.0
-author: Harpreet Seera <harpreetseera8525@gmail.com>
+version: 3.0.0
 homepage: https://github.com/hd-motion/flutter_stepo
 
 environment:
