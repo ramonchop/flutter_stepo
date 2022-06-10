@@ -107,7 +107,7 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
                   Align(
                     alignment: orientation == StepoOrientation.horizontal
                         ? AlignmentDirectional.centerStart
-                        : AlignmentDirectional.topCenter,
+                        : AlignmentDirectional.bottomCenter,
                     child: Transform.translate(
                       offset: orientation == StepoOrientation.horizontal
                           ? Offset(decrementIconAnimation.value, 0)
@@ -123,7 +123,7 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
                         child: Icon(
                           orientation == StepoOrientation.horizontal
                               ? Icons.chevron_left
-                              : Icons.keyboard_arrow_up,
+                              : Icons.keyboard_arrow_down,
                           color: _isDecrementIconClicked
                               ? iconColor
                               : iconColor.withOpacity(0.5),
@@ -145,7 +145,7 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
                           : Offset(
                               0,
                               _isIncrementIconClicked
-                                  ? textIncrementAnimation.value
+                                  ? -textIncrementAnimation.value
                                   : textDecrementAnimation.value,
                             ),
                       child: Text(
@@ -161,11 +161,11 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
                   Align(
                     alignment: orientation == StepoOrientation.horizontal
                         ? AlignmentDirectional.centerEnd
-                        : AlignmentDirectional.bottomCenter,
+                        : AlignmentDirectional.topCenter,
                     child: Transform.translate(
                       offset: orientation == StepoOrientation.horizontal
                           ? Offset(incrementIconAnimation.value, 0)
-                          : Offset(0, incrementIconAnimation.value),
+                          : Offset(0, -incrementIconAnimation.value),
                       child: InkWell(
                         customBorder: CircleBorder(),
                         onTap: () async {
@@ -174,7 +174,7 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
                         child: Icon(
                           orientation == StepoOrientation.horizontal
                               ? Icons.chevron_right
-                              : Icons.keyboard_arrow_down,
+                              : Icons.keyboard_arrow_up,
                           color: _isIncrementIconClicked
                               ? iconColor
                               : iconColor.withOpacity(0.5),
@@ -193,15 +193,16 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
   }
 
   void initProperties() {
-    orientation = widget.orientation ?? StepoOrientation.horizontal;
+    orientation = widget.orientation ?? StepoOrientation.vertical;
     upperBound = widget.upperBound ?? 100;
-    lowerBound = widget.lowerBound ?? 0;
     backgroundColor = widget.backgroundColor ?? Colors.white;
-    textColor = widget.textColor ?? Color(0xffEC645B);
-    iconColor = widget.iconColor ?? Color(0xffEC645B);
+    textColor = widget.textColor ?? Colors.black54;
+    iconColor = widget.iconColor ?? Colors.black54;
     textAnimationEndValue =
-        widget.width == null ? 100.0 : (widget.width! * 0.75);
-    _counter = widget.initialCounter ?? 0;
+        widget.width == null ? 100.0 : (widget.width! * 1.5);
+    _counter = widget.initialCounter ?? 1;
+    lowerBound = widget.lowerBound ?? _counter;
+
     rootWidth = widget.width ??
         ((orientation == StepoOrientation.horizontal) ? 160 : 80);
     if (orientation == StepoOrientation.vertical) {
@@ -317,7 +318,10 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
     required AnimationController animationController,
     required Direction direction,
   }) {
-    endValue = direction == Direction.increment ? endValue : (-endValue);
+    if (orientation == StepoOrientation.horizontal) {
+      endValue = direction == Direction.increment ? endValue : -endValue;
+    }
+
     return Tween<double>(begin: beginValue, end: endValue)
         .animate(animationController)
       ..addListener(() {

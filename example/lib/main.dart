@@ -23,11 +23,7 @@ class HomePage extends StatelessWidget {
         children: <Widget>[
           Stepo(
             key: UniqueKey(),
-            orientation: StepoOrientation.vertical,
-            textColor: Colors.black54,
-            iconColor: Colors.black54,
-            initialCounter: 1,
-            lowerBound: 1,
+            width: 50,
           ),
         ],
       )),
