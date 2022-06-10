@@ -11,6 +11,7 @@ class Stepo extends StatefulWidget {
   final Duration? animationDuration;
   final int? initialCounter, upperBound, lowerBound;
   final StepoOrientation? orientation;
+  final TextStyle? textStyle;
   Stepo({
     required Key key,
     this.initialCounter,
@@ -26,6 +27,7 @@ class Stepo extends StatefulWidget {
     this.upperBound,
     this.lowerBound,
     this.animationDuration,
+    this.textStyle,
   }) : super(key: key);
 
   @override
@@ -46,6 +48,7 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
   late Color? textColor, backgroundColor;
   late Color iconColor;
   late StepoOrientation? orientation;
+  late TextStyle? textStyle;
 
   late Animation<double> textIncrementAnimation,
       textDecrementAnimation,
@@ -150,11 +153,12 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
                             ),
                       child: Text(
                         _counter.toString(),
-                        style: TextStyle(
-                          fontSize: fontSize,
-                          color: textColor,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: textStyle ??
+                            TextStyle(
+                              fontSize: fontSize,
+                              color: textColor,
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                     ),
                   ),
@@ -193,6 +197,7 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
   }
 
   void initProperties() {
+    textStyle = widget.textStyle;
     orientation = widget.orientation ?? StepoOrientation.vertical;
     upperBound = widget.upperBound ?? 100;
     backgroundColor = widget.backgroundColor ?? Colors.white;
