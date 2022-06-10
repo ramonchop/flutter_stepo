@@ -128,8 +128,8 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
                               ? Icons.chevron_left
                               : Icons.keyboard_arrow_down,
                           color: _isDecrementIconClicked
-                              ? iconColor
-                              : iconColor.withOpacity(0.5),
+                              ? iconColor.withOpacity(0.5)
+                              : iconColor,
                           size: iconSize,
                         ),
                       ),
@@ -180,8 +180,8 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
                               ? Icons.chevron_right
                               : Icons.keyboard_arrow_up,
                           color: _isIncrementIconClicked
-                              ? iconColor
-                              : iconColor.withOpacity(0.5),
+                              ? iconColor.withOpacity(0.5)
+                              : iconColor,
                           size: iconSize,
                         ),
                       ),
