@@ -17,13 +17,13 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffEC645B),
       body: Center(
           child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Stepo(
             key: UniqueKey(),
+            width: 50,
           ),
         ],
       )),

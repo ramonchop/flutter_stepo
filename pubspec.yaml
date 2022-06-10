@@ -5,7 +5,7 @@ author: Harpreet Seera <harpreetseera8525@gmail.com>
 homepage: https://github.com/hd-motion/flutter_stepo
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
   flutter:

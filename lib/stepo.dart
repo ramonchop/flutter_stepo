@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 
 enum Direction { increment, decrement }
-enum Style { vertical, horizontal }
+
+enum StepoOrientation { vertical, horizontal }
 
 class Stepo extends StatefulWidget {
-  final double width, fontSize, iconSize;
-  final Function(int) onIncrementClicked, onDecrementClicked;
-  final Color textColor, iconColor, backgroundColor;
-  final Duration animationDuration;
-  final int initialCounter, upperBound, lowerBound;
-  final Style style;
+  final double? width, fontSize, iconSize;
+  final Function(int)? onIncrementClicked, onDecrementClicked;
+  final Color? textColor, iconColor, backgroundColor;
+  final Duration? animationDuration;
+  final int? initialCounter, upperBound, lowerBound;
+  final StepoOrientation? orientation;
   Stepo({
-    @required Key key,
+    required Key key,
     this.initialCounter,
     this.onIncrementClicked,
     this.onDecrementClicked,
-    this.style,
+    this.orientation,
     this.width,
     this.backgroundColor,
     this.fontSize,
@@ -32,25 +33,26 @@ class Stepo extends StatefulWidget {
 }
 
 class _StepoState extends State<Stepo> with TickerProviderStateMixin {
-  int _counter, upperBound, lowerBound;
-  bool _isDecrementIconClicked = false;
-  bool _isIncrementIconClicked = false;
-  double rootWidth, rootHeight, fontSize, iconSize, cornerRadius;
-  double textOpacity = 1;
-  double textAnimationEndValue;
-  Duration textAnimationDuration;
-  Duration iconAnimationDuration;
-  Duration scaleDuration = Duration(milliseconds: 100);
-  Function onIncrementClicked, onDecrementClicked;
-  Color textColor, iconColor, backgroundColor;
-  Style style;
+  late int _counter, upperBound, lowerBound;
+  late bool _isDecrementIconClicked = false;
+  late bool _isIncrementIconClicked = false;
+  late double rootWidth, rootHeight, fontSize, iconSize, cornerRadius;
+  late double textOpacity = 1;
+  late double textAnimationEndValue;
+  late Duration textAnimationDuration;
+  late Duration iconAnimationDuration;
+  late Duration scaleDuration = Duration(milliseconds: 100);
+  late Function onIncrementClicked, onDecrementClicked;
+  late Color? textColor, backgroundColor;
+  late Color iconColor;
+  late StepoOrientation? orientation;
 
-  Animation<double> textIncrementAnimation,
+  late Animation<double> textIncrementAnimation,
       textDecrementAnimation,
       incrementIconAnimation,
       decrementIconAnimation,
       scaleAnimation;
-  AnimationController textIncrementAnimationController,
+  late AnimationController textIncrementAnimationController,
       textDecrementAnimationController,
       incrementIconAnimationController,
       decrementIconAnimationController,
@@ -70,11 +72,11 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    textIncrementAnimationController?.dispose();
-    textDecrementAnimationController?.dispose();
-    incrementIconAnimationController?.dispose();
-    decrementIconAnimationController?.dispose();
-    scaleAnimationController?.dispose();
+    textIncrementAnimationController.dispose();
+    textDecrementAnimationController.dispose();
+    incrementIconAnimationController.dispose();
+    decrementIconAnimationController.dispose();
+    scaleAnimationController.dispose();
     super.dispose();
   }
 
@@ -103,11 +105,11 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
                 alignment: Alignment.center,
                 children: <Widget>[
                   Align(
-                    alignment: style == Style.horizontal
+                    alignment: orientation == StepoOrientation.horizontal
                         ? AlignmentDirectional.centerStart
-                        : AlignmentDirectional.topCenter,
+                        : AlignmentDirectional.bottomCenter,
                     child: Transform.translate(
-                      offset: style == Style.horizontal
+                      offset: orientation == StepoOrientation.horizontal
                           ? Offset(decrementIconAnimation.value, 0)
                           : Offset(
                               0,
@@ -119,9 +121,9 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
                           handleOnTap(Direction.decrement);
                         },
                         child: Icon(
-                          style == Style.horizontal
+                          orientation == StepoOrientation.horizontal
                               ? Icons.chevron_left
-                              : Icons.keyboard_arrow_up,
+                              : Icons.keyboard_arrow_down,
                           color: _isDecrementIconClicked
                               ? iconColor
                               : iconColor.withOpacity(0.5),
@@ -133,7 +135,7 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
                   Align(
                     alignment: AlignmentDirectional.center,
                     child: Transform.translate(
-                      offset: style == Style.horizontal
+                      offset: orientation == StepoOrientation.horizontal
                           ? Offset(
                               _isIncrementIconClicked
                                   ? textIncrementAnimation.value
@@ -143,7 +145,7 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
                           : Offset(
                               0,
                               _isIncrementIconClicked
-                                  ? textIncrementAnimation.value
+                                  ? -textIncrementAnimation.value
                                   : textDecrementAnimation.value,
                             ),
                       child: Text(
@@ -157,22 +159,22 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
                     ),
                   ),
                   Align(
-                    alignment: style == Style.horizontal
+                    alignment: orientation == StepoOrientation.horizontal
                         ? AlignmentDirectional.centerEnd
-                        : AlignmentDirectional.bottomCenter,
+                        : AlignmentDirectional.topCenter,
                     child: Transform.translate(
-                      offset: style == Style.horizontal
+                      offset: orientation == StepoOrientation.horizontal
                           ? Offset(incrementIconAnimation.value, 0)
-                          : Offset(0, incrementIconAnimation.value),
+                          : Offset(0, -incrementIconAnimation.value),
                       child: InkWell(
                         customBorder: CircleBorder(),
                         onTap: () async {
                           handleOnTap(Direction.increment);
                         },
                         child: Icon(
-                          style == Style.horizontal
+                          orientation == StepoOrientation.horizontal
                               ? Icons.chevron_right
-                              : Icons.keyboard_arrow_down,
+                              : Icons.keyboard_arrow_up,
                           color: _isIncrementIconClicked
                               ? iconColor
                               : iconColor.withOpacity(0.5),
@@ -191,32 +193,38 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
   }
 
   void initProperties() {
-    style = widget.style ?? Style.horizontal;
+    orientation = widget.orientation ?? StepoOrientation.vertical;
     upperBound = widget.upperBound ?? 100;
-    lowerBound = widget.lowerBound ?? 0;
     backgroundColor = widget.backgroundColor ?? Colors.white;
-    textColor = widget.textColor ?? Color(0xffEC645B);
-    iconColor = widget.iconColor ?? Color(0xffEC645B);
+    textColor = widget.textColor ?? Colors.black54;
+    iconColor = widget.iconColor ?? Colors.black54;
     textAnimationEndValue =
-        widget.width == null ? 100.0 : (widget.width * 0.75);
-    _counter = widget.initialCounter ?? 0;
-    rootWidth = widget.width ?? ((style == Style.horizontal) ? 160 : 80);
-    if (style == Style.vertical) {
+        widget.width == null ? 100.0 : (widget.width! * 1.5);
+    _counter = widget.initialCounter ?? 1;
+    lowerBound = widget.lowerBound ?? _counter;
+
+    rootWidth = widget.width ??
+        ((orientation == StepoOrientation.horizontal) ? 160 : 80);
+    if (orientation == StepoOrientation.vertical) {
       rootHeight = rootWidth * 2;
     } else {
       rootHeight = rootWidth / 2;
     }
-    cornerRadius =
-        style == Style.horizontal ? (rootWidth / 4) : (rootHeight / 4);
+    cornerRadius = orientation == StepoOrientation.horizontal
+        ? (rootWidth / 4)
+        : (rootHeight / 4);
     textAnimationDuration =
         widget.animationDuration ?? Duration(milliseconds: 200);
     iconAnimationDuration = Duration(
       milliseconds: (textAnimationDuration.inMilliseconds / 2).floor(),
     );
-    iconSize =
-        style == Style.horizontal ? rootWidth * 0.25 : (rootHeight * 0.25);
+    iconSize = orientation == StepoOrientation.horizontal
+        ? rootWidth * 0.25
+        : (rootHeight * 0.25);
 
-    fontSize = style == Style.horizontal ? (rootWidth / 5) : (rootHeight / 5);
+    fontSize = orientation == StepoOrientation.horizontal
+        ? (rootWidth / 5)
+        : (rootHeight / 5);
     onIncrementClicked = widget.onIncrementClicked ?? (val) {};
     onDecrementClicked = widget.onDecrementClicked ?? (val) {};
   }
@@ -294,25 +302,31 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
     );
   }
 
-  AnimationController getAnimationController(
-      {@required TickerProvider vsync, @required Duration duration}) {
+  AnimationController getAnimationController({
+    required TickerProvider vsync,
+    required Duration duration,
+  }) {
     return AnimationController(
       vsync: vsync,
       duration: duration,
     );
   }
 
-  Animation<double> getAnimation(
-      {@required double beginValue,
-      @required double endValue,
-      @required AnimationController animationController,
-      @required Direction direction}) {
-    endValue = direction == Direction.increment ? endValue : (-endValue);
+  Animation<double> getAnimation({
+    required double beginValue,
+    required double endValue,
+    required AnimationController animationController,
+    required Direction direction,
+  }) {
+    if (orientation == StepoOrientation.horizontal) {
+      endValue = direction == Direction.increment ? endValue : -endValue;
+    }
+
     return Tween<double>(begin: beginValue, end: endValue)
         .animate(animationController)
-          ..addListener(() {
-            setState(() {});
-          });
+      ..addListener(() {
+        setState(() {});
+      });
   }
 
   void handleOnTap(Direction direction) {
