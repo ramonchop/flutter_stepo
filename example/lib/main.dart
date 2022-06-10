@@ -24,6 +24,7 @@ class HomePage extends StatelessWidget {
           Stepo(
             key: UniqueKey(),
             width: 50,
+            iconColor: Colors.black,
           ),
         ],
       )),
