@@ -351,16 +351,17 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
     await Future.delayed(textAnimationDuration);
 
     incrementCounter();
-    onIncrementClicked(_counter);
 
     textIncrementAnimationController.reverse();
     await Future.delayed(iconAnimationDuration);
     incrementIconAnimationController.reverse();
 
     await Future.delayed(iconAnimationDuration);
+
     this.setState(() {
       _isIncrementIconClicked = false;
     });
+    onIncrementClicked(_counter);
   }
 
   void handleDecrementAnimation() async {
@@ -372,16 +373,17 @@ class _StepoState extends State<Stepo> with TickerProviderStateMixin {
     await Future.delayed(textAnimationDuration);
 
     decrementCounter();
-    onDecrementClicked(_counter);
 
     textDecrementAnimationController.reverse();
     await Future.delayed(iconAnimationDuration);
     decrementIconAnimationController.reverse();
 
     await Future.delayed(iconAnimationDuration);
+
     this.setState(() {
       _isDecrementIconClicked = false;
     });
+    onDecrementClicked(_counter);
   }
 
   void incrementCounter() {
